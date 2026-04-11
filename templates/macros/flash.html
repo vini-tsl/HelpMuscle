@@ -1,0 +1,30 @@
+{#
+    Macro para exibir mensagens flash do Flask.
+    Uso: {% from 'macros/flash.html' import render_flash %}
+         {{ render_flash() }}
+#}
+{% macro render_flash() %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-container" id="flashContainer">
+    {% for category, message in messages %}
+    <div class="flash-message flash--{{ category }}" role="alert">
+        {% if category == 'sucesso' %}
+            <i class="fa-solid fa-circle-check"></i>
+        {% elif category == 'erro' %}
+            <i class="fa-solid fa-circle-xmark"></i>
+        {% elif category == 'warning' %}
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        {% else %}
+            <i class="fa-solid fa-circle-info"></i>
+        {% endif %}
+        <span>{{ message }}</span>
+        <button type="button" class="flash-close" onclick="this.parentElement.remove()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endmacro %}

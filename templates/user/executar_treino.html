@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/executar-treino.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Executando Treino</title>
+</head>
+<body>
+
+<div id="exec-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="exec-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+    <div class="exec-header">
+        <a href="{{ url_for('usuarios.mostrar_treinos', key=key) }}" class="exec-back">
+            <i class="fa-solid fa-arrow-left"></i> Voltar
+        </a>
+        <h2>{{ treino.nome }}</h2>
+    </div>
+
+    <div class="exec-timer">
+        <div class="timer-section">
+            <div class="timer-label">Tempo total</div>
+            <div class="timer-display" id="timerTotal">00:00:00</div>
+        </div>
+    </div>
+
+    <div class="exec-exercicios">
+        <h3><i class="fa-solid fa-list-check"></i> Exercicios</h3>
+
+        {% for exercicio in treino.exercicios_treino %}
+        <div class="exec-exercicio-item" data-exercicio-id="{{ exercicio.id }}">
+            <div class="exec-exercicio-header">
+                <div class="exec-exercicio-num">{{ loop.index }}</div>
+                <div class="exec-exercicio-info">
+                    <h4>{{ exercicio.catalogo.nome if exercicio.catalogo else 'Exercicio' }}</h4>
+                    <span class="exec-meta-target">
+                        Meta: {{ exercicio.series }}x{{ exercicio.repeticoes }}
+                        {% if exercicio.descanso %} • Descanso {{ exercicio.descanso }}{% endif %}
+                    </span>
+                </div>
+                {% if exercicio.catalogo and exercicio.catalogo.video_url %}
+                <button class="exec-video-btn" onclick="mostrarVideo('{{ exercicio.catalogo.nome }}', '{{ exercicio.catalogo.video_url }}')">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Series deste exercicio -->
+            <div class="exec-series-container" id="series-{{ exercicio.id }}">
+                {% set desc_int = exercicio.descanso | regex_find('\\d+') | default('60') if exercicio.descanso else '60' %}
+                {% for s in range(exercicio.series) %}
+                <div class="exec-serie-row" data-serie="{{ s + 1 }}">
+                    <span class="exec-serie-label">Serie {{ s + 1 }}</span>
+                    <div class="exec-serie-inputs">
+                        <div class="exec-input-group">
+                            <label>Peso (kg)</label>
+                            <input type="number" class="exec-peso" placeholder="0" step="0.5" min="0">
+                        </div>
+                        <div class="exec-input-group">
+                            <label>Reps</label>
+                            <input type="number" class="exec-reps" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    <button class="exec-serie-done" onclick="iniciarDescanso({{ loop.index0 }}, '{{ exercicio.descanso | default('60s') }}', {{ exercicio.id }})" title="Iniciar descanso">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </button>
+                </div>
+                {% endfor %}
+                <!-- Botao adicionar serie extra -->
+                <button class="exec-add-serie" onclick="addSerieExtra({{ exercicio.id }}, {{ exercicio.series + 1 }})">
+                    <i class="fa-solid fa-plus"></i> Serie extra
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Countdown de descanso (overlay) -->
+    <div class="countdown-overlay" id="countdownOverlay">
+        <div class="countdown-content">
+            <i class="fa-solid fa-stopwatch countdown-icon"></i>
+            <div class="countdown-timer" id="countdownTimer">60</div>
+            <div class="countdown-label">Descanso</div>
+            <div class="countdown-actions">
+                <button onclick="addTempo(10)"><i class="fa-solid fa-plus"></i> +10s</button>
+                <button onclick="skipDescanso()" class="btn-skip"><i class="fa-solid fa-forward"></i> Pular</button>
+            </div>
+        </div>
+    </div>
+
+    <button id="btnFinalizar" onclick="prepararFinalizar()" class="exec-btn-finish">
+        <i class="fa-solid fa-check-circle"></i> Finalizar Treino
+    </button>
+
+    <div class="exec-feedback" id="feedbackSection">
+        <h3><i class="fa-solid fa-comment-dots"></i> Como foi esse treino?</h3>
+        <p>Selecione o nivel de dificuldade percebida:</p>
+        <div class="dificuldade-buttons">
+            <button class="dif-btn" data-nivel="muito_facil"><span>Muito Facil</span></button>
+            <button class="dif-btn" data-nivel="facil"><span>Facil</span></button>
+            <button class="dif-btn" data-nivel="moderado"><span>Moderado</span></button>
+            <button class="dif-btn" data-nivel="dificil"><span>Dificil</span></button>
+            <button class="dif-btn" data-nivel="muito_dificil"><span>Muito Dificil</span></button>
+        </div>
+        <textarea id="feedbackText" rows="3" placeholder="Algum comentario opcional..."></textarea>
+        <button onclick="enviarFeedback()" class="exec-btn-send">
+            <i class="fa-solid fa-paper-plane"></i> Enviar Feedback
+        </button>
+    </div>
+</main>
+
+</div>
+
+<!-- Video Modal -->
+<div id="modalVideo" class="modal-treino">
+    <div class="modal-treino-content">
+        <span class="modal-close" onclick="fecharVideo()">&times;</span>
+        <h3 id="tituloExercicio"></h3>
+        <div class="video-container">
+            <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Preencher peso atual -->
+<div id="modalPeso" class="modal-treino">
+    <div class="modal-treino-content" style="max-width:400px;">
+        <span class="modal-close" onclick="fecharModalPeso()">&times;</span>
+        <h3>Registrar peso corporal</h3>
+        <input type="number" id="inputPesoCorporal" step="0.1" placeholder="Seu peso atual (kg)" style="width:100%;padding:12px;border:2px solid #e8e8e8;border-radius:12px;font-size:16px;margin-top:16px;">
+        <button onclick="salvarPesoCorporal()" class="exec-btn-send" style="margin-top:12px;">Salvar</button>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+});
+
+// ==================== TIMER TOTAL ====================
+let startTime = Date.now();
+let timerInterval;
+let dificuldadeSelecionada = '';
+
+function updateTimer() {
+    const elapsed = Date.now() - startTime;
+    const h = Math.floor(elapsed / 3600000);
+    const m = Math.floor((elapsed % 3600000) / 60000);
+    const s = Math.floor((elapsed % 60000) / 1000);
+    document.getElementById('timerTotal').textContent =
+        `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+timerInterval = setInterval(updateTimer, 1000);
+
+// ==================== COUNTDOWN DE DESCANSO ====================
+let countdownInterval = null;
+let countdownSeconds = 0;
+
+function iniciarDescanso(serieIndex, descansoStr, exercicioId) {
+    const match = descansoStr.match(/(\d+)/);
+    const totalSegs = match ? parseInt(match[1]) : 60;
+    countdownSeconds = totalSegs;
+
+    const overlay = document.getElementById('countdownOverlay');
+    overlay.classList.add('active');
+    atualizarCountdown();
+
+    countdownInterval = setInterval(() => {
+        countdownSeconds--;
+        atualizarCountdown();
+        if (countdownSeconds <= 0) {
+            clearInterval(countdownInterval);
+            document.title = 'Descanso acabou!';
+            const timer = document.getElementById('countdownTimer');
+            timer.classList.add('finished');
+            // Vibrar se disponivel
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+    }, 1000);
+}
+
+function atualizarCountdown() {
+    const timer = document.getElementById('countdownTimer');
+    const m = Math.floor(countdownSeconds / 60);
+    const s = countdownSeconds % 60;
+    timer.textContent = countdownSeconds > 0
+        ? `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`
+        : 'Pronto!';
+}
+
+function addTempo(segs) {
+    countdownSeconds += segs;
+    atualizarCountdown();
+    if (countdownSeconds > 0) {
+        document.getElementById('countdownTimer').classList.remove('finished');
+    }
+}
+
+function skipDescanso() {
+    clearInterval(countdownInterval);
+    document.getElementById('countdownOverlay').classList.remove('active');
+    document.getElementById('countdownTimer').classList.remove('finished');
+    document.title = 'HelpMuscle - Executando Treino';
+}
+
+// ==================== SERIE EXTRA ====================
+let extraCounters = {};
+function addSerieExtra(exercicioId, numero) {
+    const container = document.getElementById('series-' + exercicioId);
+    if (!extraCounters[exercicioId]) extraCounters[exercicioId] = 0;
+    extraCounters[exercicioId]++;
+    const n = extraCounters[exercicioId] + 1;
+
+    const row = document.createElement('div');
+    row.className = 'exec-serie-row';
+    row.dataset.extra = '1';
+    row.innerHTML = `
+        <span class="exec-serie-label" style="color:var(--primary);">Serie Extra ${n}</span>
+        <div class="exec-serie-inputs">
+            <div class="exec-input-group">
+                <label>Peso (kg)</label>
+                <input type="number" class="exec-peso" placeholder="0" step="0.5" min="0">
+            </div>
+            <div class="exec-input-group">
+                <label>Reps</label>
+                <input type="number" class="exec-reps" placeholder="0" min="0">
+            </div>
+        </div>
+        <button class="exec-serie-done" onclick="iniciarDescanso(-1, '60s', ${exercicioId})">
+            <i class="fa-solid fa-stopwatch"></i>
+        </button>
+    `;
+    container.insertBefore(row, container.lastElementChild);
+}
+
+// ==================== FINALIZAR TREINO ====================
+function prepararFinalizar() {
+    clearInterval(timerInterval);
+    document.getElementById('feedbackSection').style.display = 'block';
+    document.getElementById('feedbackSection').scrollIntoView({behavior:'smooth'});
+}
+
+document.querySelectorAll('.dif-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.dif-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        dificuldadeSelecionada = btn.dataset.nivel;
+    });
+});
+
+function enviarFeedback() {
+    if (!dificuldadeSelecionada) {
+        alert('Selecione o nivel de dificuldade.');
+        return;
+    }
+    const duracaoMinutos = Math.floor((Date.now() - startTime) / 60000);
+    const feedback = document.getElementById('feedbackText').value;
+
+    // Coletar series de todos exercicios
+    const seriesData = [];
+    document.querySelectorAll('.exec-exercicio-item').forEach(item => {
+        const exercicioTreinoId = parseInt(item.dataset.exercicioId);
+        item.querySelectorAll('.exec-serie-row').forEach(row => {
+            const pesoEl = row.querySelector('.exec-peso');
+            const repsEl = row.querySelector('.exec-reps');
+            const peso = pesoEl ? parseFloat(pesoEl.value) || 0 : 0;
+            const reps = repsEl ? parseInt(repsEl.value) || 0 : 0;
+            seriesData.push({
+                exercicio_treino_id: exercicioTreinoId,
+                serie_numero: parseInt(row.dataset.serie || 0),
+                peso_kg: peso,
+                reps_feitas: reps,
+                concluida: reps > 0
+            });
+        });
+    });
+
+    fetch('/api/registrar-execucao-treino', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content},
+        body: JSON.stringify({
+            key: '{{ key }}',
+            treino_id: {{ treino.id }},
+            duracao_minutos: duracaoMinutos,
+            dificuldade_percebida: dificuldadeSelecionada,
+            feedback: feedback,
+            series: seriesData
+        })
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            alert('\u2705 ' + result.message);
+            if (result.ajuste_recomendado !== 'manter') {
+                if (confirm('A IA recomenda ' + result.ajuste_recomendado + ' a intensidade. Aplicar ajuste?')) {
+                    fetch('/api/aplicar-ajuste-treino', {
+                        method:'POST',
+                        headers:{'Content-Type':'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content},
+                        body: JSON.stringify({ key:'{{ key }}', treino_id:{{ treino.id }}, acao: result.ajuste_recomendado })
+                    }).then(r=>r.json()).then(res => { if(res.success) alert('\u2705 '+res.message); });
+                }
+            }
+            window.location.href = "{{ url_for('usuarios.mostrar_treinos', key=key) }}";
+        } else {
+            alert('\u274c Erro: ' + result.message);
+        }
+    });
+}
+
+// ==================== MODAL VIDEO ====================
+function mostrarVideo(nome, videoUrl) {
+    document.getElementById('tituloExercicio').textContent = nome;
+    document.getElementById('videoFrame').src = videoUrl;
+    document.getElementById('modalVideo').style.display = 'flex';
+}
+
+function fecharVideo() {
+    document.getElementById('modalVideo').style.display = 'none';
+    document.getElementById('videoFrame').src = '';
+}
+function fecharModalPeso() {
+    document.getElementById('modalPeso').style.display = 'none';
+}
+window.onclick = function(event) {
+    if (event.target === document.getElementById('modalVideo')) fecharVideo();
+    if (event.target === document.getElementById('modalPeso')) fecharModalPeso();
+}
+</script>
+</html>

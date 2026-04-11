@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/perfil.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>HelpMuscle - Perfil</title>
+</head>
+<body>
+
+<div id="perfil-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+            <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile active">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+</div>
+
+<main class="perfil-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+    <div class="perfil-content">
+        <div class="perfil-header">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil" class="perfil-avatar">
+            <h2>{{ user.nome }}</h2>
+            <span class="perfil-tipo">{{ user.tipo | capitalize if user.tipo else 'Usuario' }}</span>
+        </div>
+
+        <form method="POST" class="perfil-edit-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3><i class="fa-solid fa-pen"></i> Editar Perfil</h3>
+            <div class="edit-grid">
+                <div class="edit-item">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" name="nome" value="{{ user.nome }}" required>
+                </div>
+                <div class="edit-item">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="edit-item">
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" value="{{ user.telefone or '' }}">
+                </div>
+                <div class="edit-item">
+                    <label for="idade">Idade</label>
+                    <input type="number" id="idade" name="idade" value="{{ user.idade or '' }}" min="10" max="120">
+                </div>
+                <div class="edit-item">
+                    <label for="peso">Peso (kg)</label>
+                    <input type="number" id="peso" name="peso" value="{{ user.peso or '' }}" step="0.1" min="20" max="300">
+                </div>
+                <div class="edit-item">
+                    <label for="altura">Altura (cm)</label>
+                    <input type="number" id="altura" name="altura" value="{{ user.altura or '' }}" step="0.1" min="100" max="250">
+                </div>
+            </div>
+            <button type="submit" class="perfil-btn">
+                <i class="fa-solid fa-check"></i> Salvar alteracoes
+            </button>
+        </form>
+
+        <div class="perfil-grid">
+            <div class="perfil-card">
+                <h3><i class="fa-solid fa-user"></i> Dados pessoais</h3>
+                <div class="perfil-info">
+                    <div class="info-item">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Telefone</span>
+                        <span class="info-value">{{ user.telefone if user.telefone else 'Nao informado' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Membro desde</span>
+                        <span class="info-value">{{ user.data_criacao.strftime('%d/%m/%Y') if user.data_criacao else '--' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perfil-card">
+                <h3><i class="fa-solid fa-chart-line"></i> Resumo</h3>
+                <div class="perfil-info">
+                    <div class="info-item">
+                        <span class="info-label">Treinos ativos</span>
+                        <span class="info-value">{{ user.treinos|length if user.treinos else 0 }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Objetivo</span>
+                        <span class="info-value">{{ user.objetivo | capitalize if user.objetivo else 'Nao definido' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Nivel</span>
+                        <span class="info-value">{{ user.nivel_experiencia | capitalize if user.nivel_experiencia else 'Nao definido' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Formulario</span>
+                        <span class="info-value">
+                            {% if user.formulario_preenchido %}
+                                <span class="badge-success"><i class="fa-solid fa-check"></i> Concluido</span>
+                            {% else %}
+                                <span class="badge-warning"><i class="fa-solid fa-clock"></i> Pendente</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {% if user.peso or user.altura or user.idade %}
+            <div class="perfil-card">
+                <h3><i class="fa-solid fa-heart-pulse"></i> Dados fisicos</h3>
+                <div class="perfil-info">
+                    {% if user.idade %}
+                    <div class="info-item">
+                        <span class="info-label">Idade</span>
+                        <span class="info-value">{{ user.idade }} anos</span>
+                    </div>
+                    {% endif %}
+                    {% if user.peso %}
+                    <div class="info-item">
+                        <span class="info-label">Peso</span>
+                        <span class="info-value">{{ user.peso }} kg</span>
+                    </div>
+                    {% endif %}
+                    {% if user.altura %}
+                    <div class="info-item">
+                        <span class="info-label">Altura</span>
+                        <span class="info-value">{{ user.altura }} cm</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="perfil-actions">
+            <a href="{{ url_for('formulario.formulario', key=key) }}" class="perfil-btn">
+                <i class="fa-solid fa-pen-to-square"></i> Atualizar formulario
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="perfil-btn perfil-btn--logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </a>
+        </div>
+
+        <form method="POST" action="{{ url_for('usuarios.alterar_senha_perfil', key=key) }}" class="perfil-edit-form" style="margin-top: 2rem;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <h3><i class="fa-solid fa-lock"></i> Alterar Senha</h3>
+            <div class="edit-grid">
+                <div class="edit-item">
+                    <label for="senha_atual">Senha Atual</label>
+                    <input type="password" id="senha_atual" name="senha_atual" required>
+                </div>
+                <div class="edit-item">
+                    <label for="nova_senha">Nova Senha</label>
+                    <input type="password" id="nova_senha" name="nova_senha" required minlength="6">
+                </div>
+                <div class="edit-item">
+                    <label for="confirmar_senha">Confirmar Nova Senha</label>
+                    <input type="password" id="confirmar_senha" name="confirmar_senha" required minlength="6">
+                </div>
+            </div>
+            <button type="submit" class="perfil-btn">
+                <i class="fa-solid fa-key"></i> Alterar Senha
+            </button>
+        </form>
+    </div>
+</main>
+
+</div>
+
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+</script>
+
+</body>
+</html>

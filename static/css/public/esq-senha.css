@@ -1,0 +1,175 @@
+.forgot-password-page{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,var(--dark) 0%,var(--dark-mid) 50%,#2d3436 100%);
+padding:40px 20px;
+}
+
+.forgot-password-card{
+background:var(--white);
+border-radius:var(--radius-lg);
+padding:48px 40px;
+width:440px;
+max-width:100%;
+box-shadow:0 25px 60px rgba(0,0,0,0.3);
+text-align:center;
+position:relative;
+}
+
+.fp-logo{
+display:inline-flex;
+align-items:center;
+gap:8px;
+font-weight:800;
+font-size:22px;
+color:var(--primary);
+text-decoration:none;
+margin-bottom:32px;
+}
+
+.fp-steps{
+position:relative;
+min-height:300px;
+}
+
+.fp-step{
+display:none;
+animation:fadeIn 0.4s ease forwards;
+}
+
+.fp-step.active{
+display:block;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.fp-icon{
+width:64px;
+height:64px;
+border-radius:50%;
+background:rgba(230,57,70,0.1);
+display:flex;
+align-items:center;
+justify-content:center;
+margin:0 auto 20px;
+}
+
+.fp-icon i{
+font-size:24px;
+color:var(--primary);
+}
+
+.fp-icon--success{
+background:rgba(22,163,74,0.1);
+}
+
+.fp-icon--success i{
+color:#16a34a;
+}
+
+.fp-step h2{
+font-size:22px;
+font-weight:800;
+color:var(--dark);
+margin-bottom:8px;
+}
+
+.fp-step p{
+font-size:14px;
+color:var(--text-light);
+margin-bottom:24px;
+line-height:1.6;
+}
+
+.fp-step p span{
+font-weight:600;
+color:var(--dark);
+}
+
+.fp-step input{
+width:100%;
+padding:14px 18px;
+border:2px solid #e8e8e8;
+border-radius:var(--radius);
+font-size:15px;
+font-family:'Inter',sans-serif;
+background:#fafafa;
+transition:var(--transition);
+outline:none;
+margin-bottom:16px;
+}
+
+.fp-step input:focus{
+border-color:var(--primary);
+background:white;
+}
+
+.fp-step input::placeholder{
+color:#bbb;
+}
+
+.fp-btn{
+width:100%;
+padding:14px 24px;
+border:none;
+border-radius:var(--radius);
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+font-size:15px;
+font-weight:700;
+font-family:'Inter',sans-serif;
+cursor:pointer;
+transition:var(--transition);
+margin-bottom:8px;
+}
+
+.fp-btn:hover{
+box-shadow:0 8px 25px rgba(230,57,70,0.35);
+transform:translateY(-2px);
+}
+
+.fp-btn:disabled{
+opacity:0.5;
+cursor:not-allowed;
+transform:none;
+box-shadow:none;
+}
+
+.fp-btn--outline{
+background:transparent;
+border:2px solid var(--dark);
+color:var(--dark);
+}
+
+.fp-btn--outline:hover{
+background:var(--dark);
+color:white;
+}
+
+.fp-back{
+display:inline-flex;
+align-items:center;
+gap:6px;
+color:var(--text-light);
+text-decoration:none;
+font-size:14px;
+font-weight:500;
+transition:var(--transition);
+margin-top:16px;
+}
+
+.fp-back:hover{
+color:var(--primary);
+}
+
+.fp-messages{
+padding:12px 16px;
+border-radius:var(--radius);
+font-size:13px;
+font-weight:500;
+}

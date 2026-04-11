@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/chat-suporte.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Chat</title>
+</head>
+<body>
+
+<div id="chat-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="chat-page">
+    <div class="chat-card">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <a href="{{ url_for('suporte.suporte', key=key) }}" class="chat-back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="chat-header-icon {{ 'personal' if chamado.tipo == 'personal' else 'nutri' }}">
+                    <i class="fa-solid {{ 'fa-user-graduate' if chamado.tipo == 'personal' else 'fa-apple-whole' }}"></i>
+                </div>
+                <div class="chat-header-info">
+                    <h3>{{ 'Personal Trainer' if chamado.tipo == 'personal' else 'Nutricionista' }}</h3>
+                    <span class="chat-status {{ 'status-aberto' if chamado.status == 'aberto' else 'status-fechado' }}">
+                        {{ chamado.status|upper }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            {% for mensagem in mensagens %}
+            <div class="message {{ 'sent' if mensagem.remetente_id == user.id else 'received' }}" data-message-id="{{ mensagem.id }}">
+                <p>{{ mensagem.mensagem }}</p>
+                <span class="msg-time">{{ mensagem.data_envio.strftime('%H:%M') }}</span>
+            </div>
+            {% endfor %}
+
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+
+        {% if chamado.status == 'aberto' %}
+        <div class="chat-input-area">
+            <input type="text" id="mensagemInput" placeholder="Digite sua mensagem..." autocomplete="off">
+            <button onclick="enviarMensagem()" id="sendButton">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+        {% else %}
+        <div class="chat-closed">
+            <p>Chamado fechado. <a href="{{ url_for('suporte.suporte', key=key) }}">Abrir novo chamado</a></p>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+</div>
+
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+});
+
+let lastMessageId = {{ mensagens[-1].id if mensagens else 0 }};
+let autoRefreshInterval;
+let isScrolledToBottom = true;
+
+document.addEventListener('DOMContentLoaded', function() {
+    checkScrollPosition();
+    startAutoRefresh();
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.addEventListener('scroll', checkScrollPosition);
+});
+
+const chatMessages = document.getElementById('chatMessages');
+const mensagemInput = document.getElementById('mensagemInput');
+const sendButton = document.getElementById('sendButton');
+const typingIndicator = document.getElementById('typingIndicator');
+
+function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function checkScrollPosition() {
+    isScrolledToBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 100;
+}
+
+function adicionarMensagemReal(mensagem) {
+    const existingMessage = document.querySelector(`[data-message-id="${mensagem.id}"]`);
+    if (existingMessage) return;
+
+    const messageDiv = document.createElement('div');
+    const isUser = mensagem.remetente_id === {{ user.id }};
+    messageDiv.className = `message ${isUser ? 'sent' : 'received'}`;
+    messageDiv.setAttribute('data-message-id', mensagem.id);
+
+    const p = document.createElement('p');
+    p.textContent = mensagem.mensagem;
+    const time = document.createElement('span');
+    time.className = 'msg-time';
+    const d = new Date(mensagem.data_envio);
+    time.textContent = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+
+    messageDiv.appendChild(p);
+    messageDiv.appendChild(time);
+    chatMessages.insertBefore(messageDiv, typingIndicator);
+    lastMessageId = Math.max(lastMessageId, mensagem.id);
+    if (isUser || isScrolledToBottom) scrollToBottom();
+}
+
+function enviarMensagem() {
+    const mensagem = mensagemInput.value.trim();
+    if (!mensagem) return;
+
+    mensagemInput.disabled = true;
+    sendButton.disabled = true;
+
+    fetch('/api/enviar-mensagem-suporte', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content},
+        body: JSON.stringify({
+            key: '{{ key }}',
+            chamado_id: {{ chamado.id }},
+            mensagem: mensagem
+        })
+    }).then(r => r.json())
+      .then(data => {
+          mensagemInput.disabled = false;
+          sendButton.disabled = false;
+          if (data.success) {
+              mensagemInput.value = '';
+              if (data.mensagem) adicionarMensagemReal(data.mensagem);
+              else buscarNovasMensagens();
+          } else {
+              alert('Erro: ' + data.message);
+          }
+      })
+      .catch(err => {
+          mensagemInput.disabled = false;
+          sendButton.disabled = false;
+          alert('Erro de conexao: ' + err.message);
+      });
+}
+
+function buscarNovasMensagens() {
+    fetch(`/api/buscar-mensagens-suporte?key={{ key }}&chamado_id={{ chamado.id }}&ultima_mensagem_id=${lastMessageId}`)
+        .then(r => r.json())
+        .then(data => {
+            if (data.success && data.mensagens) {
+                data.mensagens.forEach(msg => adicionarMensagemReal(msg));
+            }
+        })
+        .catch(err => console.error('Erro:', err));
+}
+
+mensagemInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
+
+function startAutoRefresh() {
+    autoRefreshInterval = setInterval(buscarNovasMensagens, 500);
+}
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearInterval(autoRefreshInterval);
+    else startAutoRefresh();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/historico.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Historico</title>
+</head>
+<body>
+
+<div id="hist-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}" class="active">Historico</a>
+            <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="historico-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+
+    <div class="hist-header">
+        <h2><i class="fa-solid fa-chart-line"></i> Historico & Progresso</h2>
+        <p>Acompanhe sua evolucao ao longo do tempo.</p>
+    </div>
+
+    <!-- Grafico de Peso Corporal -->
+    <div class="hist-section">
+        <h3><i class="fa-solid fa-weight-scale"></i> Evolucao do Peso</h3>
+        <div class="hist-chart-container">
+            <canvas id="chartPeso"></canvas>
+        </div>
+        {% if not user.peso %}
+        <p class="hist-empty">Registre seu peso pela primeira vez.</p>
+        <button class="hist-btn" onclick="abrirModalMedidas()">
+            <i class="fa-solid fa-plus"></i> Registrar Medidas
+        </button>
+        {% else %}
+        <p class="hist-current">Peso atual: <strong>{{ "%.1f"|format(user.peso) }} kg</strong></p>
+        <button class="hist-btn" onclick="abrirModalMedidas()">
+            <i class="fa-solid fa-pen"></i> Atualizar Medidas
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Historico de Treinos -->
+    <div class="hist-section">
+        <h3><i class="fa-solid fa-dumbbell"></i> Treinos Executados</h3>
+        <div id="historicoTreinos" class="hist-treinos-list">
+            <div class="hist-loading"><i class="fa-solid fa-spinner fa-spin"></i> Carregando...</div>
+        </div>
+    </div>
+
+    <!-- Registrar Medidas -->
+    <div class="hist-section">
+        <h3><i class="fa-solid fa-ruler"></i> Medidas Corporais</h3>
+        <div class="hist-medidas-form">
+            <div class="medida-row">
+                <div class="medida-field">
+                    <label>Peso (kg)</label>
+                    <input type="number" id="inputPeso" step="0.1" placeholder="70.5">
+                </div>
+                <div class="medida-field">
+                    <label>Gordura Corp. (%)</label>
+                    <input type="number" id="inputGordura" step="0.1" placeholder="15.0">
+                </div>
+            </div>
+            <div class="medida-row">
+                <div class="medida-field">
+                    <label>Braco (cm)</label>
+                    <input type="number" id="inputBraco" step="0.1" placeholder="1">
+                </div>
+                <div class="medida-field">
+                    <label>Peito (cm)</label>
+                    <input type="number" id="inputPeito" step="0.1" placeholder="1">
+                </div>
+            </div>
+            <div class="medida-row">
+                <div class="medida-field">
+                    <label>Cintura (cm)</label>
+                    <input type="number" id="inputCintura" step="0.1" placeholder="1">
+                </div>
+                <div class="medida-field">
+                    <label>Coxa (cm)</label>
+                    <input type="number" id="inputCoxa" step="0.1" placeholder="1">
+                </div>
+            </div>
+            <button class="hist-btn hist-btn-primary" onclick="salvarMedidas()">
+                <i class="fa-solid fa-save"></i> Salvar Medidas
+            </button>
+        </div>
+    </div>
+</main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+const KEY = '{{ key }}';
+
+// Mobile toggle
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+
+// Carregar historico de treinos
+async function carregarHistorico() {
+    try {
+        const res = await fetch(`/api/historico-treinos?key=${KEY}`);
+        const data = await res.json();
+        const container = document.getElementById('historicoTreinos');
+
+        if (!data.success || data.historico.length === 0) {
+            container.innerHTML = '<p class="hist-empty">Nenhum treino executado ainda. Bora treinar!</p>';
+            return;
+        }
+
+        container.innerHTML = data.historico.map(h => `
+            <div class="hist-treino-item">
+                <div class="hist-treino-info">
+                    <strong>${h.treino_nome}</strong>
+                    <span class="hist-treino-date">${h.data}</span>
+                </div>
+                <div class="hist-treino-stats">
+                    <span class="hist-stat"><i class="fa-solid fa-clock"></i> ${h.duracao_min || 0} min</span>
+                    <span class="hist-stat"><i class="fa-solid fa-dumbbell"></i> ${h.num_series} series</span>
+                    <span class="hist-badge dif-${h.dificuldade}">${h.dificuldade || '-'}</span>
+                </div>
+                ${h.feedback ? `<p class="hist-treino-feedback"><i class="fa-solid fa-quote-left"></i> ${h.feedback}</p>` : ''}
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error('Erro ao carregar historico:', e);
+    }
+}
+
+// Carregar grafico de peso
+async function carregarEvolucaoPeso() {
+    try {
+        const res = await fetch(`/api/evolucao-peso?key=${KEY}`);
+        const data = await res.json();
+
+        if (!data.success || data.evolucao.length === 0) return;
+
+        const labels = data.evolucao.map(e => e.data);
+        const pesos = data.evolucao.map(e => e.peso_kg);
+
+        const ctx = document.getElementById('chartPeso');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Peso (kg)',
+                    data: pesos,
+                    borderColor: '#e63946',
+                    backgroundColor: 'rgba(230,57,70,0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#e63946',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                    },
+                    x: {
+                        grid: { display: false },
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error('Erro ao carregar evolucao:', e);
+    }
+}
+
+// Salvar medidas corporais
+async function salvarMedidas() {
+    const payload = {
+        key: KEY,
+        peso_kg: parseFloat(document.getElementById('inputPeso').value) || null,
+        gordura_corporal: parseFloat(document.getElementById('inputGordura').value) || null,
+        braco_cm: parseFloat(document.getElementById('inputBraco').value) || null,
+        peito_cm: parseFloat(document.getElementById('inputPeito').value) || null,
+        cintura_cm: parseFloat(document.getElementById('inputCintura').value) || null,
+        coxa_cm: parseFloat(document.getElementById('inputCoxa').value) || null,
+    };
+
+    try {
+        const res = await fetch('/api/registrar-medida-corporal', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content},
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('Medidas salvas com sucesso!');
+            location.reload();
+        } else {
+            alert('Erro: ' + result.message);
+        }
+    } catch (e) {
+        alert('Erro ao salvar medidas.');
+    }
+}
+
+function abrirModalMedidas() {
+    document.querySelector('.hist-medidas-form').scrollIntoView({behavior: 'smooth'});
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    carregarHistorico();
+    carregarEvolucaoPeso();
+});
+
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
+});
+</script>
+</body>
+</html>

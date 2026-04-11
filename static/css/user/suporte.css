@@ -1,0 +1,154 @@
+#suporte-body{
+min-height:100vh;
+background:var(--bg);
+}
+
+.suporte-page{
+max-width:800px;
+margin:0 auto;
+padding:96px 24px 40px;
+}
+
+.suporte-header{
+text-align:center;
+margin-bottom:28px;
+}
+
+.suporte-header h2{
+font-size:28px;
+font-weight:800;
+color:var(--dark);
+margin-bottom:8px;
+}
+
+.suporte-header p{
+color:var(--text-light);
+font-size:16px;
+}
+
+.suporte-ativo{
+margin-bottom:20px;
+}
+
+.suporte-ativo-card{
+background:var(--white);
+border:2px solid rgba(230,57,70,0.2);
+border-radius:var(--radius-lg);
+padding:20px 24px;
+display:flex;
+align-items:center;
+gap:16px;
+flex-wrap:wrap;
+}
+
+.suporte-ativo-icon{
+width:44px;
+height:44px;
+border-radius:50%;
+background:rgba(230,57,70,0.1);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.suporte-ativo-icon i{
+color:var(--primary);
+font-size:18px;
+}
+
+.suporte-ativo-info{
+flex:1;
+}
+
+.suporte-ativo-info h3{
+font-size:15px;
+font-weight:700;
+color:var(--dark);
+}
+
+.suporte-ativo-info p{
+font-size:13px;
+color:var(--text-light);
+}
+
+.suporte-btn{
+padding:10px 20px;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+border-radius:50px;
+text-decoration:none;
+font-weight:600;
+font-size:14px;
+display:inline-flex;
+align-items:center;
+gap:8px;
+transition:var(--transition);
+}
+
+.suporte-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 20px rgba(230,57,70,0.3);
+}
+
+.suporte-options{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+}
+
+.suporte-card{
+background:var(--white);
+border-radius:var(--radius-lg);
+padding:40px 28px;
+text-align:center;
+cursor:pointer;
+transition:var(--transition);
+border:1px solid rgba(0,0,0,0.04);
+}
+
+.suporte-card:hover{
+transform:translateY(-4px);
+box-shadow:var(--shadow-lg);
+}
+
+.suporte-card-icon{
+width:72px;
+height:72px;
+border-radius:50%;
+margin:0 auto 20px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.suporte-card-icon.personal{
+background:linear-gradient(135deg,#3b82f6,#60a5fa);
+}
+
+.suporte-card-icon.nutri{
+background:linear-gradient(135deg,#16a34a,#4ade80);
+}
+
+.suporte-card-icon i{
+font-size:28px;
+color:white;
+}
+
+.suporte-card h3{
+font-size:18px;
+font-weight:700;
+color:var(--dark);
+margin-bottom:8px;
+}
+
+.suporte-card p{
+font-size:14px;
+color:var(--text-light);
+line-height:1.6;
+}
+
+@media(max-width:768px){
+.suporte-options{
+grid-template-columns:1fr;
+}
+}

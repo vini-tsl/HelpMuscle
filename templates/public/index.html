@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="HelpMuscle - Plataforma inteligente de treinos personalizados. Crie, acompanhe e evolua seus treinos de forma simples e eficiente.">
+
+<title>HelpMuscle - Treinos Inteligentes</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/public/homepage.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="logo">
+      <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+    </a>
+    
+    <nav class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#depoimentos">Depoimentos</a>
+      <a href="#precos">Planos</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Entrar</a>
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Cadastrar</a>
+    </div>
+    <button class="mobile-toggle" id="mobileToggle">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#inicio">Inicio</a>
+  <a href="#funcionalidades">Funcionalidades</a>
+  <a href="#como-funciona">Como funciona</a>
+  <a href="#depoimentos">Depoimentos</a>
+  <a href="#precos">Planos</a>
+  <div class="mobile-menu-actions">
+    <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Entrar</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Cadastrar</a>
+  </div>
+</div>
+
+<main>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-content">
+    <span class="hero-badge">
+      <i class="fa-solid fa-bolt"></i> Plataforma 100% gratuita para comecar
+    </span>
+    <h1>Evolucao que voce <span class="gradient-text">enxerga e sente</span></h1>
+    <p class="hero-subtitle">
+      O HelpMuscle cria treinos personalizados com inteligencia artificial,
+      acompanha seu progresso e ajusta seu plano automaticamente para
+      maximizar seus resultados.
+    </p>
+    <div class="hero-buttons">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-rocket"></i> Comecar agora
+      </a>
+      <a href="#como-funciona" class="btn btn-outline btn-lg">
+        <i class="fa-solid fa-play"></i> Ver como funciona
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-number">10k+</span>
+        <span class="stat-label">Usuarios ativos</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="stat-number">50k+</span>
+        <span class="stat-label">Treinos criados</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="stat-number">98%</span>
+        <span class="stat-label">Satisfacao</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card hero-card-1">
+      <i class="fa-solid fa-fire-flame-curved"></i>
+      <span>Treino do dia</span>
+      <small>Peito + Triceps</small>
+    </div>
+    <div class="hero-card hero-card-2">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>Progresso semanal</span>
+      <div class="mini-chart">
+        <div class="bar" style="height:40%"></div>
+        <div class="bar" style="height:65%"></div>
+        <div class="bar" style="height:50%"></div>
+        <div class="bar" style="height:80%"></div>
+        <div class="bar" style="height:70%"></div>
+        <div class="bar" style="height:95%"></div>
+      </div>
+    </div>
+    <div class="hero-card hero-card-3">
+      <i class="fa-solid fa-trophy"></i>
+      <span>Meta alcancada!</span>
+      <small>Supino: 60kg</small>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS / SOCIAL PROOF -->
+<section class="social-proof">
+  <div class="container">
+    <p class="social-proof-text">Confiado por estudantes e profissionais de
+      <strong>educacao fisica</strong> em todo o Brasil
+    </p>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section class="features" id="funcionalidades">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Funcionalidades</span>
+      <h2 class="section-title">Tudo que voce precisa para <span class="gradient-text">evoluir</span></h2>
+      <p class="section-subtitle">
+        Ferramentas completas para criar, gerenciar e acompanhar seus treinos
+        de forma inteligente e organizada.
+      </p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-clipboard-list"></i>
+        </div>
+        <h3>Treinos Personalizados</h3>
+        <p>
+          Gere rotinas de treino adaptadas ao seu nivel, objetivos e
+          equipamentos disponiveis automaticamente.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-chart-column"></i>
+        </div>
+        <h3>Acompanhamento Visual</h3>
+        <p>
+          Graficos e metricas que mostram sua evolucao de
+          forma clara e motivadora ao longo do tempo.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <h3>Planejamento Semanal</h3>
+        <p>
+          Organize seus treinos da semana com estrutura
+          profissional e lembretes inteligentes.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <h3>IA Assistente</h3>
+        <p>
+          Tire duvidas sobre exercicios, tecnica e
+          programacao de treino com assistente integrado.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-user-graduate"></i>
+        </div>
+        <h3>Para Profissionais</h3>
+        <p>
+          Personal trainers podem gerenciar alunos,
+          montar treinos e acompanhar resultados a distancia.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fa-solid fa-shield-check"></i>
+        </div>
+        <h3>Seguro e Confiavel</h3>
+        <p>
+          Seus dados protegidos com seguranca e
+          privacidade em primeiro lugar sempre.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="how-it-works" id="como-funciona">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Como funciona</span>
+      <h2 class="section-title">Simples em <span class="gradient-text">3 passos</span></h2>
+      <p class="section-subtitle">
+        De zero ao seu primeiro treino personalizado em menos de 2 minutos.
+      </p>
+    </div>
+    <div class="steps-container">
+      <div class="step-visual">
+        <div class="step-item active">
+          <div class="step-number">
+            <span>1</span>
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div class="step-info">
+            <h3>Crie seu perfil</h3>
+            <p>
+              Informe seus objetivos, nivel de experiencia,
+              equipamentos disponiveis e preferencias.
+            </p>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-number">
+            <span>2</span>
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div class="step-info">
+            <h3>Gere seu treino</h3>
+            <p>
+              O HelpMuscle cria automaticamente um plano
+              de treino otimizado para voce.
+            </p>
+          </div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-number">
+            <span>3</span>
+            <i class="fa-solid fa-arrow-trend-up"></i>
+          </div>
+          <div class="step-info">
+            <h3>Acompanhe e evolua</h3>
+            <p>
+              Registre treinos, veja seu progresso e receba
+              ajustes automaticos no seu plano.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="testimonials" id="depoimentos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Depoimentos</span>
+      <h2 class="section-title">O que dizem sobre o <span class="gradient-text">HelpMuscle</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <p class="testimonial-text">
+          "Organizar meus treinos nunca foi tao facil.
+          Consigo ver minha evolucao semana a semana
+          e isso motiva demais."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">RM</div>
+          <div class="author-info">
+            <strong>Rafael M.</strong>
+            <span>Estudante</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <p class="testimonial-text">
+          "Como personal trainer, poder gerenciar os treinos
+          dos meus alunos a distancia mudou completamente
+          meu trabalho."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">CS</div>
+          <div class="author-info">
+            <strong>Camila S.</strong>
+            <span>Personal Trainer</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star-half-stroke"></i>
+        </div>
+        <p class="testimonial-text">
+          "A interface e muito intuitiva. Comecei a usar sem
+          precisar de tutorial. Recomendo pra quem quer
+          organizacao nos treinos."
+        </p>
+        <div class="testimonial-author">
+          <div class="author-avatar">LF</div>
+          <div class="author-info">
+            <strong>Lucas F.</strong>
+            <span>Iniciante</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS / PRECOS -->
+<section class="pricing" id="precos">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Planos</span>
+      <h2 class="section-title">Comece <span class="gradient-text">gratis</span>, evolua sem limite</h2>
+      <p class="section-subtitle">
+        Planos que cabem no seu bolso e nos seus objetivos.
+      </p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Gratuito</h3>
+        <div class="pricing-price">
+          <span class="currency">R$</span>
+          <span class="amount">0</span>
+          <span class="period">/mes</span>
+        </div>
+        <p class="pricing-desc">Ideal para comecar e explorar a plataforma.</p>
+        <ul class="pricing-features">
+          <li><i class="fa-solid fa-check"></i> 1 treino ativo</li>
+          <li><i class="fa-solid fa-check"></i> Acompanhamento basico</li>
+          <li><i class="fa-solid fa-check"></i> Exercicios ilimitados</li>
+          <li><i class="fa-solid fa-check"></i> Comunidade</li>
+        </ul>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-dark">Comecar gratis</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge-popular">Mais popular</div>
+        <h3>Pro</h3>
+        <div class="pricing-price">
+          <span class="currency">R$</span>
+          <span class="amount">19</span>
+          <span class="period">/mes</span>
+        </div>
+        <p class="pricing-desc">Para quem leva treino a serio.</p>
+        <ul class="pricing-features">
+          <li><i class="fa-solid fa-check"></i> Treinos ilimitados</li>
+          <li><i class="fa-solid fa-check"></i> IA Assistente</li>
+          <li><i class="fa-solid fa-check"></i> Graficos avancados</li>
+          <li><i class="fa-solid fa-check"></i> Planejamento semanal</li>
+          <li><i class="fa-solid fa-check"></i> Suporte prioritario</li>
+        </ul>
+        <a href="#" class="btn btn-primary">Assinar Pro</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Personal</h3>
+        <div class="pricing-price">
+          <span class="currency">R$</span>
+          <span class="amount">49</span>
+          <span class="period">/mes</span>
+        </div>
+        <p class="pricing-desc">Para profissionais de educacao fisica.</p>
+        <ul class="pricing-features">
+          <li><i class="fa-solid fa-check"></i> Tudo do Pro</li>
+          <li><i class="fa-solid fa-check"></i> Ate 30 alunos</li>
+          <li><i class="fa-solid fa-check"></i> Dashboard profissional</li>
+          <li><i class="fa-solid fa-check"></i> Relatorios de progresso</li>
+          <li><i class="fa-solid fa-check"></i> Marca propria</li>
+        </ul>
+        <a href="#" class="btn btn-outline-dark">Ser Personal</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">FAQ</span>
+      <h2 class="section-title">Perguntas frequentes</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>O HelpMuscle e realmente gratuito?<i class="fa-solid fa-chevron-down"></i></summary>
+        <p>Sim! O plano gratuito permite criar treinos, acompanhar progresso e acessar todos os exercicios disponiveis na plataforma. Sem cartao de credito.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Preciso ser profissional de educacao fisica para usar?<i class="fa-solid fa-chevron-down"></i></summary>
+        <p>Nao. O HelpMuscle foi criado para qualquer pessoa que quer organizar e acompanhar seus treinos, independente do nivel de experiencia.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como funciona a IA assistente?<i class="fa-solid fa-chevron-down"></i></summary>
+        <p>A IA analisa seu perfil, historico de treinos e objetivos para sugerir exercicios, ajustes de carga e modificacoes no seu plano de forma inteligente.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Posso cancelar meu plano a qualquer momento?<i class="fa-solid fa-chevron-down"></i></summary>
+        <p>Sim, voce pode cancelar, alterar ou fazer upgrade do seu plano a qualquer momento, sem multas ou burocracia.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Pronto para transformar seus treinos?</h2>
+      <p>
+        Junte-se a milhares de pessoas que ja estao
+        evoluindo com o HelpMuscle.
+      </p>
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-white btn-lg">
+          <i class="fa-solid fa-rocket"></i> Comecar gratuitamente
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+          <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <p>Plataforma inteligente de treinos personalizados para sua evolucao.</p>
+      </div>
+      <div class="footer-links-group">
+        <h4>Produto</h4>
+        <a href="#funcionalidades">Funcionalidades</a>
+        <a href="#precos">Planos</a>
+        <a href="#">Atualizacoes</a>
+      </div>
+      <div class="footer-links-group">
+        <h4>Empresa</h4>
+        <a href="#">Sobre nos</a>
+        <a href="#">Contato</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="footer-links-group">
+        <h4>Suporte</h4>
+        <a href="#">Central de ajuda</a>
+        <a href="#">Privacidade</a>
+        <a href="#">Termos de uso</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 HelpMuscle. Todos os direitos reservados.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#"><i class="fa-brands fa-github"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+  mobileToggle.addEventListener('click', () => {
+    mobileToggle.classList.toggle('active');
+    mobileMenu.classList.toggle('open');
+  });
+}
+// Close mobile menu on link click
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+  link.addEventListener('click', () => {
+    mobileToggle.classList.remove('active');
+    mobileMenu.classList.remove('open');
+  });
+});
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const navbar = document.getElementById('navbar');
+  if (window.scrollY > 40) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+});
+</script>
+
+</body>
+</html>

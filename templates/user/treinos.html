@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/treinos.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>HelpMuscle - Treinos</title>
+</head>
+<body>
+
+<div id="treinos-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}" class="active">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+            <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="treinos-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+    <div class="treinos-header-inner">
+        <h2>Meus Treinos</h2>
+        <div class="treinos-search">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" id="pesquisaTreino" placeholder="Pesquisar treino...">
+        </div>
+    </div>
+
+    <div class="treinos-container" id="treinosContainer">
+        {% if treinos %}
+            {% for treino in treinos %}
+            <div class="treino-card {% if loop.first %}ativo{% endif %}" data-treino-nome="{{ treino.nome.lower() | default('') }}">
+                {% if progressos and progressos[treino.id] > 0 %}
+                <span class="status-badge em-andamento">{{ progressos[treino.id] }}%</span>
+                {% else %}
+                <span class="status-badge proximo-treino">Novo</span>
+                {% endif %}
+
+                <div class="treino-bar">
+                    <div class="treino-bar-fill" style="width:{{ progressos[treino.id] if progressos and treino.id in progressos else 0 }}%"></div>
+                </div>
+
+                <div class="treino-card-header">
+                    <div class="treino-icon">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </div>
+                    <div class="treino-card-title">
+                        <h3>{{ treino.nome }}</h3>
+                        <span>{{ treino.tipo | default('') }}{% if treino.dia_semana %} • {{ treino.dia_semana }}{% endif %}</span>
+                    </div>
+                </div>
+
+                <div class="treino-card-content">
+                    {% if treino.exercicios %}
+                    <ul class="exercicios-list">
+                        {% for exercicio in treino.exercicios %}
+                        <li>
+                            <span class="exercicio-dot"></span>
+                            <div class="exercicio-info">
+                                <strong>{{ exercicio.catalogo.nome if exercicio.catalogo else 'Exercicio' }}</strong>
+                                <span>{{ exercicio.series }}x{{ exercicio.repeticoes }}{% if exercicio.descanso %} • {{ exercicio.descanso }}{% endif %}</span>
+                            </div>
+                            {% if sugestoes and sugestoes[treino.id] %}
+                                {% set sugestao = sugestoes[treino.id][loop.index0] %}
+                                {% if sugestao %}
+                                <span class="exercicio-progressao {% if sugestao.status == 'aumentar_peso' %}prog-up{% elif sugestao.status == 'reduzir_peso' %}prog-down{% elif sugestao.status == 'primeira_vez' %}prog-new{% else %}prog-ok{% endif %}">
+                                    {% if sugestao.status == 'primeira_vez' %}
+                                    Novo
+                                    {% elif sugestao.detalhe %}
+                                    {{ sugestao.detalhe.sugestao }}
+                                    {% endif %}
+                                </span>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="treino-card-footer">
+                    {% if progressos and progressos[treino.id] > 0 %}
+                    <a href="{{ url_for('usuarios.executar_treino', treino_id=treino.id, key=key) }}" class="treino-btn">
+                        <i class="fa-solid fa-play"></i> Continuar Treino
+                    </a>
+                    {% elif treino.status != 'inativo' %}
+                    <a href="{{ url_for('usuarios.executar_treino', treino_id=treino.id, key=key) }}" class="treino-btn">
+                        <i class="fa-solid fa-play"></i> Iniciar Treino
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="treino-empty">
+                <i class="fa-solid fa-dumbbell"></i>
+                <h3>Nenhum treino encontrado</h3>
+                <p>Preencha o formulario de avaliacao para gerar seus treinos personalizados.</p>
+                <a href="{{ url_for('formulario.formulario', key=key) }}" class="treino-btn">
+                    <i class="fa-solid fa-clipboard-list"></i> Preencher formulario
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if paginacao.pages > 1 %}
+    <div class="pagination" style="display:flex;justify-content:center;gap:0.5rem;margin:1.5rem 0;flex-wrap:wrap;">
+        {% if paginacao.has_prev %}
+            <a href="?pagina={{ paginacao.prev_num }}" style="padding:0.5rem 1rem;background:#2a2a2a;color:#fff;border-radius:4px;text-decoration:none;">&laquo; Anterior</a>
+        {% endif %}
+        {% for p in paginacao.iter_pages() %}
+            {% if p %}
+                <span class="page-link" style="{% if p == paginacao.page %}background:#e63946;color:#fff;{% else %}background:#2a2a2a;{% endif %} padding:0.5rem 1rem;border-radius:4px;">
+                    <a href="?pagina={{ p }}" style="color:inherit;text-decoration:none;">{{ p }}</a>
+                </span>
+            {% else %}
+                <span class="page-link" style="padding:0.5rem 1rem;color:#888;">...</span>
+            {% endif %}
+        {% endfor %}
+        {% if paginacao.has_next %}
+            <a href="?pagina={{ paginacao.next_num }}" style="padding:0.5rem 1rem;background:#2a2a2a;color:#fff;border-radius:4px;text-decoration:none;">Proxima &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</main>
+
+<!-- Modal Video -->
+<div id="modalVideo" class="modal-treino">
+    <div class="modal-treino-content">
+        <span class="modal-close" onclick="fecharVideo()">&times;</span>
+        <h3 id="tituloExercicio"></h3>
+        <div class="video-container">
+            <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div id="instrucoesExercicio"></div>
+    </div>
+</div>
+
+</div>
+
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Search
+document.getElementById('pesquisaTreino').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    document.querySelectorAll('.treino-card').forEach(card => {
+        const nome = card.getAttribute('data-treino-nome') || '';
+        card.style.display = nome.includes(filter) ? '' : 'none';
+    });
+});
+
+function mostrarVideo(nome, videoUrl, instrucoes) {
+    document.getElementById('tituloExercicio').textContent = nome;
+    document.getElementById('videoFrame').src = videoUrl;
+    document.getElementById('instrucoesExercicio').innerHTML = '<strong>Instrucoes:</strong><br>' + (instrucoes || 'Nenhuma instrucao disponivel.');
+    document.getElementById('modalVideo').style.display = 'flex';
+}
+
+function fecharVideo() {
+    document.getElementById('modalVideo').style.display = 'none';
+    document.getElementById('videoFrame').src = '';
+}
+
+window.onclick = function(event) {
+    const modalVideo = document.getElementById('modalVideo');
+    if (event.target === modalVideo) {
+        fecharVideo();
+    }
+}
+</script>
+
+</body>
+</html>

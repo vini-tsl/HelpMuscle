@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/esq-senha.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Recuperar Senha</title>
+</head>
+<body>
+
+<main class="forgot-password-page">
+    <div class="forgot-password-card">
+        <a href="/" class="fp-logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+
+        <div class="fp-steps" id="stepContainer">
+            <!-- Step 1: Email -->
+            <div class="fp-step active" id="step-email">
+                <div class="fp-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                <h2>Recuperar Senha</h2>
+                <p>Informe o email da sua conta para receber o codigo de verificacao.</p>
+                <input type="email" id="email" placeholder="Seu email" required />
+                <button id="btnSendEmail" class="fp-btn">
+                    <span><i class="fa-solid fa-paper-plane"></i> Enviar Codigo</span>
+                </button>
+                <a href="{{ url_for('auth.login') }}" class="fp-back">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+                </a>
+            </div>
+
+            <!-- Step 2: Confirm email sent -->
+            <div class="fp-step" id="step-confirm-email">
+                <div class="fp-icon fp-icon--success"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Email Enviado!</h2>
+                <p>Enviamos um codigo para <span id="email-confirm"></span>. Verifique sua caixa de entrada e spam.</p>
+                <button id="btnNextToCode" class="fp-btn fp-btn--outline">
+                    <span><i class="fa-solid fa-arrow-right"></i> Inserir Codigo</span>
+                </button>
+                <a href="{{ url_for('auth.login') }}" class="fp-back">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+                </a>
+            </div>
+
+            <!-- Step 3: Code -->
+            <div class="fp-step" id="step-code">
+                <div class="fp-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <h2>Verificar Codigo</h2>
+                <p>Digite o codigo de 6 digitos que voce recebeu por email.</p>
+                <input type="text" id="code" placeholder="123456" maxlength="6" required />
+                <button id="btnConfirmCode" class="fp-btn" disabled>
+                    <span><i class="fa-solid fa-check"></i> Confirmar Codigo</span>
+                </button>
+                <a href="{{ url_for('auth.login') }}" class="fp-back">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+                </a>
+            </div>
+
+            <!-- Step 4: New password -->
+            <div class="fp-step" id="step-new-password">
+                <div class="fp-icon fp-icon--success"><i class="fa-solid fa-lock"></i></div>
+                <h2>Nova Senha</h2>
+                <p>Digite e confirme sua nova senha. Minimo 6 caracteres.</p>
+                <input type="password" id="new-password" placeholder="Nova senha" minlength="6" required />
+                <input type="password" id="confirm-password" placeholder="Confirme a nova senha" minlength="6" required />
+                <button id="btnChangePassword" class="fp-btn" disabled>
+                    <span><i class="fa-solid fa-key"></i> Alterar Senha</span>
+                </button>
+                <a href="{{ url_for('auth.login') }}" class="fp-back">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+                </a>
+            </div>
+        </div>
+
+        <div id="fpMessage" class="fp-message" style="display:none;"></div>
+    </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/esqueceu.js') }}"></script>
+
+</body>
+</html>

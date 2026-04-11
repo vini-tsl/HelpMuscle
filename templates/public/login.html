@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/login.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+	<title>HelpMuscle - Entrar</title>
+</head>
+<body>
+	<!-- NAVBAR -->
+	<header class="navbar" id="navbar">
+		<div class="navbar-inner">
+			<a href="/" class="logo">
+			<i class="fa-solid fa-dumbbell"></i> HelpMuscle
+			</a>
+
+
+
+			<div class="nav-actions">
+			<a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Entrar</a>
+			<a href="{{ url_for('auth.login') }}" class="btn btn-primary">Cadastrar</a>
+			</div>
+			<button class="mobile-toggle" id="mobileToggle">
+			<span></span><span></span><span></span>
+			</button>
+		</div>
+	</header>
+
+	<!-- MOBILE MENU -->
+	<div class="mobile-menu" id="mobileMenu">
+		<a href="/">Home</a>
+		<div class="mobile-menu-actions">
+			<a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Entrar</a>
+			<a href="{{ url_for('auth.login') }}" class="btn btn-primary">Cadastrar</a>
+		</div>
+	</div>
+
+	<main class="forms">
+			<div class="container" id="container">
+				<div class="form-container sign-up-container">
+					<form action="{{ url_for('auth.registrar') }}" method="POST">
+						<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+						<h1>Registrar-se</h1>
+						<input type="text" name="nome" placeholder="Usuário" required />
+						<input type="tel" name="telefone" placeholder="Telefone" required>
+						<input type="email" name="email" placeholder="Email" required />
+						<input type="password" name="senha" placeholder="Senha" required />
+						<button type="submit">Registrar</button>
+					</form>
+				</div>
+			<div class="form-container sign-in-container">
+				<form action="{{ url_for('auth.login') }}" method="POST">
+					<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+					{% if erro %}
+						<p class="form-msg form-msg--error">{{ erro }}</p>
+					{% elif sucesso %}
+						<p class="form-msg form-msg--success">{{ sucesso }}</p>
+					{% endif %}
+					<h1>Login</h1>
+					<input type="email" name="email" placeholder="Email" required />
+					<input type="password" name="senha" placeholder="Senha" required />
+					<a href="{{ url_for('auth.esq_senha') }}">Esqueceu a senha?</a>
+					<button type="submit">Logar</button>
+					<span class="toggle-label">Nao tem conta? <a id="mobileSignUp" href="#">Cadastre-se</a></span>
+				</form>
+			</div>
+			<div class="overlay-container">
+				<div class="overlay">
+					<div class="overlay-panel overlay-left">
+						<h1>Bem-vindo de volta!</h1>
+						<p>Faca login e continue treinando</p>
+						<button class="ghost" id="signIn">Entrar</button>
+					</div>
+					<div class="overlay-panel overlay-right">
+						<h1>Ola!</h1>
+						<p>Crie sua conta e comece agora</p>
+						<button class="ghost" id="signUp">Registrar-se</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+	const signUpButton = document.getElementById('signUp');
+	const signInButton = document.getElementById('signIn');
+	const container = document.getElementById('container');
+
+	signUpButton.addEventListener('click', () => {
+		container.classList.add('right-panel-active');
+	});
+
+	signInButton.addEventListener('click', () => {
+		container.classList.remove('right-panel-active');
+	});
+
+	// Mobile toggle
+	const mobileToggle = document.getElementById('mobileToggle');
+	const mobileMenu = document.getElementById('mobileMenu');
+	if (mobileToggle) {
+		mobileToggle.addEventListener('click', () => {
+			mobileToggle.classList.toggle('active');
+			mobileMenu.classList.toggle('open');
+		});
+	}
+	document.querySelectorAll('.mobile-menu a').forEach(link => {
+		link.addEventListener('click', () => {
+			mobileToggle.classList.remove('active');
+			mobileMenu.classList.remove('open');
+		});
+	});
+
+	// Mobile form toggle
+	const mobileSignUp = document.getElementById('mobileSignUp');
+	if (mobileSignUp) {
+		mobileSignUp.addEventListener('click', (e) => {
+			e.preventDefault();
+			container.classList.add('right-panel-active');
+		});
+	}
+
+	window.addEventListener('scroll', () => {
+		const navbar = document.getElementById('navbar');
+		if (window.scrollY > 40) {
+			navbar.classList.add('scrolled');
+		} else {
+			navbar.classList.remove('scrolled');
+		}
+	});
+	</script>
+</body>
+</html>

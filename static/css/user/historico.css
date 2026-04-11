@@ -1,0 +1,130 @@
+#hist-body{
+min-height:100vh;
+background:var(--bg);
+}
+
+.historico-page{
+max-width:800px;
+margin:0 auto;
+padding:96px 24px 40px;
+}
+
+.hist-header{
+text-align:center;
+margin-bottom:36px;
+}
+.hist-header h2{
+font-size:26px;font-weight:800;color:var(--dark);
+display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.hist-header h2 i{color:var(--primary);}
+.hist-header p{color:var(--text-light);font-size:15px;margin-top:4px;}
+
+.hist-section{
+background:var(--white);
+border-radius:var(--radius-lg);
+padding:28px;
+margin-bottom:20px;
+border:1px solid rgba(0,0,0,0.04);
+}
+.hist-section h3{
+font-size:17px;font-weight:700;color:var(--dark);
+margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.hist-section h3 i{color:var(--primary);}
+
+/* Empty state */
+.hist-loading{text-align:center;padding:24px;color:var(--text-light);}
+.hist-empty{text-align:center;padding:16px;color:var(--text-light);font-size:14px;}
+
+/* Btn */
+.hist-btn{
+display:inline-flex;align-items:center;gap:8px;
+padding:10px 22px;border-radius:50px;border:2px solid var(--dark);
+background:transparent;color:var(--dark);font-weight:600;font-size:14px;
+cursor:pointer;transition:var(--transition);text-decoration:none;
+font-family:'Inter',sans-serif;margin-top:8px;
+}
+.hist-btn:hover{background:var(--dark);color:white;}
+.hist-btn-primary{
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+border:none;color:white;
+}
+.hist-btn-primary:hover{box-shadow:0 8px 25px rgba(230,57,70,0.35);transform:translateY(-2px);}
+.hist-current{font-size:14px;color:var(--text-light);margin-top:8px;}
+.hist-current strong{color:var(--dark);font-size:16px;}
+
+/* Chart */
+.hist-chart-container{
+position:relative;height:250px;margin-bottom:16px;
+}
+
+/* Historico de treinos */
+.hist-treinos-list{display:flex;flex-direction:column;gap:12px;}
+
+.hist-treino-item{
+padding:16px 20px;
+border:1px solid #f0f0f0;
+border-radius:var(--radius);
+transition:var(--transition);
+}
+.hist-treino-item:hover{border-color:var(--primary);box-shadow:0 2px 12px rgba(230,57,70,0.06);}
+
+.hist-treino-info{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:8px;
+}
+.hist-treino-info strong{font-size:15px;color:var(--dark);}
+.hist-treino-date{font-size:12px;color:var(--text-light);}
+
+.hist-treino-stats{
+display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+}
+.hist-stat{
+display:flex;align-items:center;gap:4px;
+font-size:13px;color:var(--text);
+}
+.hist-stat i{color:var(--primary);font-size:12px;}
+
+.hist-badge{
+padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700;
+text-transform:uppercase;letter-spacing:0.3px;
+}
+.dif-muito_facil,.dif-facil{background:#d1fae5;color:#065f46;}
+.dif-moderado{background:#fef3c7;color:#92400e;}
+.dif-dificil,.dif-muito_dificil{background:#fee2e2;color:#991b1b;}
+
+.hist-treino-feedback{
+margin-top:8px;font-size:13px;color:var(--text-light);
+font-style:italic;padding-left:16px;
+border-left:3px solid var(--primary);
+}
+
+/* Medidas form */
+.hist-medidas-form{
+max-width:500px;
+margin:0 auto;
+}
+.medida-row{
+display:flex;gap:12px;margin-bottom:12px;
+}
+.medida-field{
+flex:1;
+display:flex;flex-direction:column;gap:4px;
+}
+.medida-field label{
+font-size:12px;font-weight:600;color:var(--text-light);
+text-transform:uppercase;letter-spacing:0.3px;
+}
+.medida-field input{
+padding:10px 12px;border:2px solid #e8e8e8;border-radius:8px;
+font-size:14px;font-family:'Inter',sans-serif;
+outline:none;transition:var(--transition);
+}
+.medida-field input:focus{border-color:var(--primary);}
+
+@media(max-width:768px){
+.historico-page{padding:80px 16px 24px;}
+.hist-section{padding:20px;}
+.medida-row{flex-direction:column;gap:8px;}
+}

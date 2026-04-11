@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/suporte.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Suporte</title>
+</head>
+<body>
+
+<div id="suporte-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+            <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}" class="active">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="suporte-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+    <div class="suporte-header">
+        <h2>Central de Suporte</h2>
+        <p>Tire duvidas com profissionais especializados.</p>
+    </div>
+
+    {% if chamado_ativo %}
+    <div class="suporte-ativo">
+        <div class="suporte-ativo-card">
+            <div class="suporte-ativo-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+            <div class="suporte-ativo-info">
+                <h3>Chamado em Andamento</h3>
+                <p>{{ 'Personal Trainer' if chamado_ativo.tipo == 'personal' else 'Nutricionista' }}{% if chamado_ativo.profissional %} com {{ chamado_ativo.profissional.nome }}{% endif %}</p>
+            </div>
+            <a href="{{ url_for('chat.chat_suporte', key=key, chamado_id=chamado_ativo.id) }}" class="suporte-btn">
+                <i class="fa-solid fa-message"></i> Ir para Chat
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="suporte-options">
+        <div class="suporte-card" onclick="abrirChamado('personal')">
+            <div class="suporte-card-icon personal">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <h3>Personal Trainer</h3>
+            <p>Duvidas sobre treino, tecnica, progressao de carga e montagem de treinos.</p>
+        </div>
+        <div class="suporte-card" onclick="abrirChamado('nutricionista')">
+            <div class="suporte-card-icon nutri">
+                <i class="fa-solid fa-apple-whole"></i>
+            </div>
+            <h3>Nutricionista</h3>
+            <p>Orientacoes sobre alimentacao, dieta e suplementacao.</p>
+        </div>
+    </div>
+</main>
+
+</div>
+
+<script>
+const mobileToggle = document.getElementById('mobileToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        mobileMenu.classList.toggle('open');
+    });
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('open');
+    });
+});
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 10) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+async function abrirChamado(tipo) {
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfTokenValue = csrfMeta ? csrfMeta.content : '';
+    try {
+        const response = await fetch('/api/criar-chamado', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfTokenValue},
+            body: JSON.stringify({ key: '{{ key }}', tipo: tipo })
+        });
+        const data = await response.json();
+        if (data.success) {
+            window.location.href = '/chat-suporte/' + data.chamado_id + '?key={{ key }}';
+        } else {
+            alert('Erro ao abrir chamado: ' + data.message);
+        }
+    } catch (error) {
+        alert('Erro ao conectar com o servidor');
+    }
+}
+</script>
+
+</body>
+</html>

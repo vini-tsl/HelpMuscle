@@ -1,0 +1,276 @@
+#form-body{
+min-height:100vh;
+background:var(--bg);
+}
+
+.formulario-page{
+max-width:700px;
+margin:0 auto;
+padding:96px 24px 40px;
+}
+
+.form-inner{
+background:var(--white);
+border-radius:var(--radius-lg);
+padding:40px 32px;
+border:1px solid rgba(0,0,0,0.04);
+}
+
+.form-header{
+text-align:center;
+margin-bottom:28px;
+}
+
+.form-header h2{
+font-size:24px;
+font-weight:800;
+color:var(--dark);
+margin-bottom:8px;
+}
+
+.form-header p{
+font-size:15px;
+color:var(--text-light);
+}
+
+.form-progress{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:32px;
+}
+
+.form-progress .progress-bar{
+flex:1;
+height:8px;
+background:#f0f0f0;
+border-radius:8px;
+overflow:hidden;
+}
+
+.form-progress .progress{
+height:100%;
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+border-radius:8px;
+transition:width 0.4s ease;
+}
+
+.progress-text{
+font-size:14px;
+font-weight:600;
+color:var(--primary);
+white-space:nowrap;
+}
+
+/* Steps */
+
+.form-step{
+display:none;
+animation:stepIn 0.3s ease;
+}
+
+.form-step.active{
+display:block;
+}
+
+@keyframes stepIn{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.step-header{
+text-align:center;
+margin-bottom:24px;
+}
+
+.step-number{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:36px;
+height:36px;
+border-radius:50%;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+font-weight:800;
+font-size:16px;
+margin-bottom:12px;
+}
+
+.step-header h3{
+font-size:18px;
+font-weight:700;
+color:var(--dark);
+line-height:1.4;
+}
+
+/* Radio cards */
+
+.radio-cards{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-bottom:8px;
+}
+
+.radio-cards--inline{
+flex-direction:row;
+flex-wrap:wrap;
+gap:8px;
+}
+
+.radio-card{
+display:flex;
+align-items:center;
+gap:12px;
+padding:16px 20px;
+border:2px solid #e8e8e8;
+border-radius:var(--radius);
+cursor:pointer;
+transition:var(--transition);
+}
+
+.radio-card:hover{
+border-color:var(--primary);
+background:rgba(230,57,70,0.02);
+}
+
+.radio-card input{
+display:none;
+}
+
+.radio-card span{
+font-size:15px;
+font-weight:500;
+color:var(--text);
+transition:var(--transition);
+}
+
+.radio-card:has(input:checked){
+border-color:var(--primary);
+background:rgba(230,57,70,0.06);
+}
+
+.radio-card:has(input:checked) span{
+color:var(--dark);
+font-weight:600;
+}
+
+.radio-card i{
+font-size:16px;
+}
+
+/* Pill variant */
+
+.radio-card--pill{
+flex:0 0 auto;
+}
+
+.checkbox-cards{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+@media(max-width:480px){
+.checkbox-cards{
+grid-template-columns:1fr;
+}
+}
+
+/* Step navigation */
+
+.step-nav{
+display:flex;
+justify-content:space-between;
+gap:12px;
+margin-top:24px;
+}
+
+.step-nav button{
+padding:14px 28px;
+border:none;
+border-radius:50px;
+font-size:15px;
+font-weight:600;
+font-family:'Inter',sans-serif;
+cursor:pointer;
+transition:var(--transition);
+display:inline-flex;
+align-items:center;
+gap:8px;
+}
+
+.next-btn{
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+margin-left:auto;
+}
+
+.next-btn:hover{
+box-shadow:0 8px 25px rgba(230,57,70,0.35);
+transform:translateY(-2px);
+}
+
+.prev-btn{
+background:var(--bg);
+color:var(--text);
+}
+
+.prev-btn:hover{
+background:#e8e8e8;
+}
+
+.submit-btn{
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+margin-left:auto;
+padding:14px 36px;
+}
+
+.submit-btn:hover{
+box-shadow:0 8px 25px rgba(230,57,70,0.35);
+transform:translateY(-2px);
+}
+
+.submit-btn:disabled{
+opacity:0.6;
+cursor:not-allowed;
+transform:none;
+box-shadow:none;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+.formulario-page{
+padding:80px 16px 32px;
+}
+
+.form-inner{
+padding:28px 20px;
+}
+
+.step-header h3{
+font-size:16px;
+}
+
+.radio-cards--inline{
+flex-direction:column;
+}
+
+.step-nav{
+flex-direction:column-reverse;
+}
+
+.step-nav button{
+width:100%;
+justify-content:center;
+}
+
+.next-btn{
+margin-left:0;
+}
+
+}

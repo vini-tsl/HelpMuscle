@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/user.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user/formulario.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='image/fav.png') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>HelpMuscle - Formulario</title>
+</head>
+<body>
+
+<div id="form-body">
+
+<header class="nav-user" id="navbar">
+    <div class="nav-user-inner">
+        <a href="{{ url_for('usuarios.usuarios', key=key) }}" class="logo">
+            <i class="fa-solid fa-dumbbell"></i> HelpMuscle
+        </a>
+        <nav class="nav-user-links">
+            <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+            <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+            <a href="{{ url_for('historico.historico', key=key) }}">Historico</a>
+            <a href="{{ url_for('formulario.formulario', key=key) }}" class="active">Formulario</a>
+            <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+        </nav>
+        <a href="{{ url_for('usuarios.perfil', key=key) }}" class="nav-user-profile">
+            <img src="{{ url_for('static', filename='image/profile.png') }}" alt="Perfil">
+            <span>{{ user.nome }}</span>
+        </a>
+        <a href="{{ url_for('auth.logout', key=key) }}" class="nav-user-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair
+        </a>
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="{{ url_for('usuarios.usuarios', key=key) }}">Home</a>
+    <a href="{{ url_for('treinos.mostrar_treinos', key=key) }}">Treinos</a>
+    <a href="{{ url_for('formulario.formulario', key=key) }}">Formulario</a>
+    <a href="{{ url_for('suporte.suporte', key=key) }}">Suporte</a>
+    <a href="{{ url_for('usuarios.perfil', key=key) }}">Perfil</a>
+</div>
+
+<main class="formulario-page">
+    {% from 'macros/flash.html' import render_flash %}
+    {{ render_flash() }}
+    <div class="form-inner">
+        <div class="form-header">
+            <h2>Montar seu treino personalizado</h2>
+            <p>Responda 10 perguntas rapidas para gerarmos o plano ideal para voce.</p>
+        </div>
+
+        <div class="form-progress">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <span id="progress-text" class="progress-text">1 / 10</span>
+        </div>
+
+        <form id="multiStepForm">
+
+            <!-- 1. Objetivo -->
+            <div class="form-step active">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <h3>Qual e o seu principal objetivo com o treino?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="objetivo" value="massa">
+                        <span><i class="fa-solid fa-dumbbell"></i> Ganho de massa muscular</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="objetivo" value="definicao">
+                        <span><i class="fa-solid fa-arrow-trend-down"></i> Definicao / perder gordura</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="objetivo" value="saude">
+                        <span><i class="fa-solid fa-heart"></i> Melhorar saude e disposicao</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="objetivo" value="forca">
+                        <span><i class="fa-solid fa-bolt"></i> Ganhar forca</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="objetivo" value="estetico">
+                        <span><i class="fa-solid fa-star"></i> Ficar estetico</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 2. Nivel -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h3>Qual e o seu nivel atual de experiencia com musculacao?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="nivel" value="iniciante">
+                        <span><i class="fa-solid fa-seedling"></i> Iniciante (menos de 6 meses)</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="nivel" value="intermediario">
+                        <span><i class="fa-solid fa-leaf"></i> Intermediario (6 meses a 2 anos)</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="nivel" value="avancado">
+                        <span><i class="fa-solid fa-tree"></i> Avancado (mais de 2 anos)</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 3. Frequencia -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Quantos dias por semana voce pode treinar?</h3>
+                </div>
+                <div class="radio-cards radio-cards--inline">
+                    <label class="radio-card radio-card--pill">
+                        <input type="radio" name="frequencia" value="3">
+                        <span>3 dias</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="radio" name="frequencia" value="4">
+                        <span>4 dias</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="radio" name="frequencia" value="5">
+                        <span>5 dias</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="radio" name="frequencia" value="6">
+                        <span>6 dias</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 4. Tempo -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">4</span>
+                    <h3>Quanto tempo voce tem disponivel por treino?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="tempo" value="30">
+                        <span><i class="fa-solid fa-clock"></i> 30 minutos</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="tempo" value="45">
+                        <span><i class="fa-solid fa-clock"></i> 45 minutos</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="tempo" value="60">
+                        <span><i class="fa-solid fa-clock"></i> 1 hora</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="tempo" value="mais">
+                        <span><i class="fa-solid fa-clock"></i> Mais de 1 hora</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 5. Local -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">5</span>
+                    <h3>Onde voce pretende treinar?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="local" value="academia">
+                        <span><i class="fa-solid fa-building"></i> Academia</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="local" value="casa_equip">
+                        <span><i class="fa-solid fa-house"></i> Em casa com equipamentos</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="local" value="casa_sem">
+                        <span><i class="fa-solid fa-house-laptop"></i> Em casa sem equipamentos</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="local" value="livre">
+                        <span><i class="fa-solid fa-tree-city"></i> Ao ar livre</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 6. Lesao -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">6</span>
+                    <h3>Voce tem alguma limitacao fisica ou lesao?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="lesao" value="nao">
+                        <span><i class="fa-solid fa-check-circle" style="color:#16a34a"></i> Nao</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="lesao" value="sim">
+                        <span><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> Sim</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 7. Alimentacao -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">7</span>
+                    <h3>Voce segue uma alimentacao voltada para os objetivos?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="alimentacao" value="nutricionista">
+                        <span><i class="fa-solid fa-user-doctor"></i> Acompanhamento nutricional</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="alimentacao" value="propria">
+                        <span><i class="fa-solid fa-utensils"></i> Sim, por conta propria</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="alimentacao" value="nao">
+                        <span><i class="fa-solid fa-ban"></i> Nao</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 8. Gordura -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">8</span>
+                    <h3>Como esta seu percentual de gordura atual (se souber)?</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="gordura" value="alto">
+                        <span>Alto</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="gordura" value="medio">
+                        <span>Medio</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="gordura" value="baixo">
+                        <span>Baixo</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="gordura" value="nao_sabe">
+                        <span>Nao sei dizer</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 9. Motivacao -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">9</span>
+                    <h3>Nivel de energia e motivacao para treinar:</h3>
+                </div>
+                <div class="radio-cards">
+                    <label class="radio-card">
+                        <input type="radio" name="motivacao" value="alta">
+                        <span><i class="fa-solid fa-fire" style="color:#16a34a"></i> Alta motivacao</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="motivacao" value="media">
+                        <span><i class="fa-solid fa-fire-flame-curved" style="color:#f59e0b"></i> Mediana</span>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="motivacao" value="baixa">
+                        <span><i class="fa-solid fa-cloud-rain" style="color:#64748b"></i> Baixa, preciso de estimulo</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="button" class="next-btn">Proximo <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- 10. Foco -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">10</span>
+                    <h3>Areas do corpo que deseja focar:</h3>
+                </div>
+                <div class="checkbox-cards">
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="peito">
+                        <span>Peito</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="costas">
+                        <span>Costas</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="pernas">
+                        <span>Pernas</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="gluteos">
+                        <span>Gluteos</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="ombros">
+                        <span>Ombros</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="abdomen">
+                        <span>Abdomen</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="bracos">
+                        <span>Biceps / Triceps</span>
+                    </label>
+                    <label class="radio-card radio-card--pill">
+                        <input type="checkbox" name="foco" value="geral">
+                        <span>Corpo todo</span>
+                    </label>
+                </div>
+                <div class="step-nav">
+                    <button type="button" class="prev-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                    <button type="submit" class="submit-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Treinos</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+</div>
+
+<script>
+const steps = document.querySelectorAll(".form-step");
+const progress = document.getElementById("progress");
+const progressText = document.getElementById("progress-text");
+const nextBtns = document.querySelectorAll(".next-btn");
+const prevBtns = document.querySelectorAll(".prev-btn");
+let currentStep = 0;
+
+function updateFormSteps() {
+    steps.forEach((step, i) => {
+        step.classList.toggle("active", i === currentStep);
+    });
+    let percent = ((currentStep + 1) / steps.length) * 100;
+    progress.style.width = percent + "%";
+    progressText.textContent = (currentStep + 1) + " / " + steps.length;
+}
+
+nextBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const inputs = steps[currentStep].querySelectorAll('input:checked');
+        if (inputs.length === 0) {
+            alert("Selecione uma opcao para continuar.");
+            return;
+        }
+        if (currentStep < steps.length - 1) {
+            currentStep++;
+            updateFormSteps();
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+    });
+});
+
+prevBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (currentStep > 0) {
+            currentStep--;
+            updateFormSteps();
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+    });
+});
+
+updateFormSteps();
+
+document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const camposObrigatorios = ['objetivo','nivel','frequencia','tempo','local','lesao','alimentacao','gordura','motivacao'];
+    const faltantes = camposObrigatorios.filter(campo => !formData.get(campo));
+    if (faltantes.length > 0) {
+        alert("Preencha todos os campos.");
+        return;
+    }
+    const data = {
+        key: '{{ key }}',
+        objetivo: formData.get('objetivo'),
+        nivel: formData.get('nivel'),
+        frequencia: formData.get('frequencia'),
+        tempo: formData.get('tempo'),
+        local: formData.get('local'),
+        lesao: formData.get('lesao'),
+        alimentacao: formData.get('alimentacao'),
+        gordura: formData.get('gordura'),
+        motivacao: formData.get('motivacao'),
+        foco: Array.from(formData.getAll('foco'))
+    };
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Gerando Treinos...';
+
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfTokenValue = csrfMeta ? csrfMeta.content : '';
+    fetch('/api/salvar-formulario', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfTokenValue},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            alert('\u2705 ' + result.message);
+            window.location.href = result.redirect_url;
+        } else {
+            alert('\u274c Erro: ' + result.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Treinos';
+        }
+    })
+    .catch(error => {
+        alert('\u274c Erro: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Gerar Treinos';
+    });
+});
+</script>
+
+</body>
+</html>

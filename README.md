@@ -1,4 +1,4 @@
-# TimbuMuscle
+# HelpMuscle
 
 Plataforma web para gerencio de treinos personalizados, voltada para alunos e profissionais de educacao fisica.
 

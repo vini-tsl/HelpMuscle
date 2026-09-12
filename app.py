@@ -25,7 +25,18 @@ def create_app():
     # Configurações
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'altere-esta-chave-em-producao')
     instance_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'instance')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{os.path.join(instance_path, "users.db")}')
+    os.makedirs(instance_path, exist_ok=True)
+
+    database_url = os.environ.get('DATABASE_URL')
+    if not database_url:
+        database_url = f'sqlite:///{os.path.join(instance_path, "users.db")}'
+    elif database_url.startswith('sqlite:///') and not database_url.startswith('sqlite:////'):
+        database_path = database_url.removeprefix('sqlite:///')
+        if database_path.startswith('instance/'):
+            database_path = database_path.removeprefix('instance/')
+        database_url = f'sqlite:///{os.path.join(instance_path, database_path)}'
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # CSRF
